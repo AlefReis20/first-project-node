@@ -1,15 +1,19 @@
+
+
 /*
     - GET => BUSCAR INFORMAÇÕES NO BACK-END
     - POST => CRIAR INFORMAÇÕES NO BACK-END
     - PUT/PATCH => ATUALIZAR/ALTERAR INFORMAÇÕES NO BACK-END
     - DELEDE => DELETAR INFORMAÇÕES NO BACK-END
 */
+
 const express = require('express')
 const uuid = require('uuid')
-
-const port = 3000
+const cors = require('cors')
+const port = 3001
 const app = express()
 app.use(express.json())
+app.use(cors())
 
 const users = []
 const checkUserId = (request, response, next) => {
@@ -17,7 +21,7 @@ const checkUserId = (request, response, next) => {
 
     const index = users.findIndex(user => user.id === id)
 
-    if(index < 0) {
+    if (index < 0) {
         return response.status(404).json({ message: "User Not Found" })
     }
 
@@ -27,21 +31,21 @@ const checkUserId = (request, response, next) => {
     next()
 }
 
-app.get('/users', (request,response) => {
-   return response.json(users)
+app.get('/users', (request, response) => {
+    return response.json(users)
 })
 
-app.post('/users', (request, response) =>{
+app.post('/users', (request, response) => {
     const { name, age } = request.body
 
-    const user = { id:uuid.v4(), name, age }
+    const user = { id: uuid.v4(), name, age }
 
     users.push(user)
 
     return response.status(201).json(user)
 })
 
-app.put('/users/:id', checkUserId, (request,response) => {
+app.put('/users/:id', checkUserId, (request, response) => {
     const index = request.userIndex
     const id = request.userId
     const { name, age } = request.body
@@ -51,18 +55,18 @@ app.put('/users/:id', checkUserId, (request,response) => {
     users[index] = updatedUser
 
     return response.json(updatedUser)
- })
+})
 
- app.delete('/users/:id', checkUserId, (request,response) => {
+app.delete('/users/:id', checkUserId, (request, response) => {
     const index = request.userIndex
 
-    users.splice(index,1)
+    users.splice(index, 1)
 
     return response.status(204).json()
-    
- })
- 
- 
-app.listen(port, () =>{
+
+})
+
+
+app.listen(port, () => {
     console.log(`🚀Server Started on port ${port}🚀`)
 })
